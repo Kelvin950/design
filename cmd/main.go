@@ -33,8 +33,9 @@ func main() {
 	 dbpassword:= configr.GetEnv("DB_PASSWORD")
 	 DBName :=  configr.GetEnv("DB_Name")
 	 dbPort :=  configr.GetEnv("DB_PORT")
+	 dbhost := configr.GetEnv("DB_HOST")
 	firebasekey:= configr.GetEnv("FIREBASE_KEY")
-	dsn :=fmt.Sprintf("host=localhost user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai" , dbUser , dbpassword , DBName ,dbPort)
+	dsn :=fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai" ,dbhost , dbUser , dbpassword , DBName ,dbPort)
  dbConn, err :=db.NewDb(dsn)
  if err!=nil{
 	log.Fatal(err)

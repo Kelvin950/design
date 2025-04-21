@@ -22,6 +22,7 @@ type Product struct {
 	BrandID *uint  `gorm:"column:brand_id"`
 	ProductDetails []Product_Detail `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	OrderDetails []OrderDetail
+	Wishlist []Wishlist `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (d DB) CreateProduct(product *domain.Product)error{ 

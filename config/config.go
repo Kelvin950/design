@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -12,15 +13,13 @@ type Config struct{
 
 
 
- func NewConfig()( *Config,error){
+ func NewConfig()( *Config){
 
   err := godotenv.Load("../.env")
 
-  if err!=nil{
-	return nil , err
-  }
+fmt.Println(err,"=========================")
 
-  return &Config{} ,nil
+  return &Config{} 
  }
 
 

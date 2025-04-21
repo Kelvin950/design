@@ -37,11 +37,12 @@ func (s *Server)Routes(){
 	router.Handle("/createUser",s.CreateUser() ).Methods("POST")
 	router.Handle("/products", s.CreateProduct()).Methods("POST")
 	router.Handle("/products", s.GetProduct()).Methods("GET")
-	router.Handle("/products_detail" , s.GetProductDetails()).Methods("POST")
+	router.Handle("/products_detail" , s.CreateProduct_Detail()).Methods("POST")
 	router.Handle("/products_detail", s.GetProductDetails()).Methods("GET")
 	router.Handle("/order" , s.CreateOrders()).Methods("POST")
 	router.Handle("/order" , s.GetOrders()).Methods("GET")
 	router.Handle("/order/{userId}" , s.GetUserOrder()).Methods("GET")
+	router.Handle("/wishlist" , s.GetUserWishlist()).Methods("GET")
   s.Router =  router
 }
 
@@ -84,7 +85,7 @@ func (s *Server)CreateUser()http.HandlerFunc{
 	}
 }
 
-func(s *Server)SiginUser()http.HandlerFunc{
+func(s *Server)SiginUser()http.HandlerFunc{ 
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		defer r.Body.Close()
@@ -458,4 +459,52 @@ w.Header().Add("Content-Type" ,"application/json")
 
 
 	}
+
+
+	
+}
+
+func(s Server)GetUserWishlist()http.HandlerFunc{
+
+     return func(w http.ResponseWriter, r *http.Request) {
+
+		userId :=  mux.Vars(r)["userId"] 
+	  
+		i , err:=strconv.Atoi(userId)
+
+		if err!=nil{
+				 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			res := domain.H{
+			 "message": err,
+			}
+			fmt.Println(err)
+			res.WriteTo(w)
+			return
+		}
+ 
+	
+		userWishlist , err := s.Api.GetUserWishlist(uint(i)) 
+ 
+		if err!=nil{
+				 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			res := domain.H{
+			 "message": err,
+			}
+			fmt.Println(err)
+			res.WriteTo(w)
+			return
+		}
+ 
+		 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusOK)		 
+		res:= domain.H{
+			"success":true ,
+			"wishlist":userWishlist ,
+		}
+		res.WriteTo(w)
+	 }
+	
+
 }

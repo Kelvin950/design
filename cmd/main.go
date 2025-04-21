@@ -24,10 +24,8 @@ import (
 func main() {
 
  
-	configr,err  := config.NewConfig()
-	if err!=nil{
-		log.Fatal(err) 
-	}
+	configr  := config.NewConfig()
+
 
 	 dbUser := configr.GetEnv("DB_USER")
 	 dbpassword:= configr.GetEnv("DB_PASSWORD")
@@ -61,13 +59,14 @@ if err != nil {
 	
    } 
  
-   done := make(chan error)
+   done := make(chan error , 1)
    
    go func(){
 
 	err:= serve.ListenAndServe()
 	if err!=nil && err!= http.ErrServerClosed{
        done <- err
+	   return
 	}
 	close(done)
    }()
@@ -93,7 +92,10 @@ if err != nil {
      serve.Shutdown(ctx)
 
 	 case err:=<-done :
-		log.Fatalf("server error %s" , err) 
+		if err!=nil{
+			log.Fatalf("server error %s" , err) 
+		}
+		log.Println("server closed")
 		
 	 
 	 }

@@ -14,4 +14,5 @@ type Api interface{
 	  GetOrders(orders *[]domain.Orders)error
 	  GetUserOrder(order *domain.Orders)error
 	  SigInUser(user *domain.User)(error)
+	  GetUserWishlist(userid uint)([]domain.Wishlist  , error)
 }

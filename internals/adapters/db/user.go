@@ -18,6 +18,7 @@ type Userr struct {
 	FirebaseID string `gorm:"column:firebase_id"`
 	UserName string `gorm:"unique;column:username"`
 	Orders  []Order
+	Wishlist  []Wishlist  `gorm:"foreignKey:UserrID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (d DB)CreateUser(user *domain.User)error{

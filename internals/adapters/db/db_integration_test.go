@@ -356,7 +356,8 @@ var m  ="xs|s|M|L"
 
 
 func (suite *dbsuite)TestCreateOrder(){
-var   category =  domain.Category{
+
+ var   category =  domain.Category{
 		Name: "Clothing",
 	}
 	err:=suite.CreateCategory(&category) 
@@ -517,6 +518,144 @@ suite.NotEmpty(orders[0].OrderDetails)
 	suite.NoError(err)  
 	suite.NotEmpty(userOrders.OrderDetails)
 	
+
+}
+
+func(suite *dbsuite)TestWishList(){
+	 var   category =  domain.Category{
+		Name: "Clothing",
+	}
+	err:=suite.CreateCategory(&category) 
+
+suite.NoError(err)
+	var audience=  domain.Audience{
+		Name: "Women", 
+		
+	}
+ 
+
+	
+  err = suite.CreateAudience(&audience) 
+
+suite.NoError(err)
+
+var m  ="xs|s|M|L"
+  var typpe =  domain.Typpe{
+ 		Name: "T-shirt", 
+		CategoryID: &category.Id,
+		AudienceID: &audience.Id, 
+		UnitOfMeasurement:&m ,
+  } 
+
+    err = suite.CreateTypes(&typpe) 
+
+	suite.NoError(err)
+	suite.NotEmpty(typpe.Id) 
+	suite.Equal(typpe.AudienceID , &audience.Id) 
+	suite.Equal(typpe.CategoryID , &category.Id)
+ 
+
+	var brand=  domain.Brand{
+		Name: "Adidas",
+	}
+	err=  suite.CreateBrand(&brand)
+	suite.NoError(err) 
+   
+	var color = domain.Color{
+		Name: "White",
+		Code: "#fff",
+	}
+
+	err =  suite.CreateColor(&color) 
+	suite.NoError(err) 
+
+	size := domain.Sizee{
+		Name: "XL",
+	}
+
+	err = suite.CreateSizee(&size) 
+	suite.NoError(err) 
+
+	product:= domain.Product{
+		Name: "T-shirt",
+		Color: []int64{int64(color.Id)},
+		Sizes: []int64{int64(size.Id)} ,
+		Quantity: 10, 
+		MaxPrice: 100,
+		MinPrice: 12, 
+		BrandID: &brand.Id, 
+		TyppeID: &typpe.Id,
+	}
+
+	err= suite.CreateProduct(&product) 
+	suite.NoError(err) 
+
+	err= suite.CreateProduct(&product) 
+	suite.NoError(err) 
+
+	suite.NotEmpty(product.Id) 
+	suite.NotEmpty(product.Sizes) 
+	suite.NotEmpty(product.Color) 
+
+	suite.Contains(product.Color , int64(color.Id)) 
+	suite.Contains(product.Sizes ,int64( size.Id)) 
+
+
+	product_detail := domain.Product_Detail{
+	 ProductID: &product.Id,
+	ColorID: &color.Id,
+	SizeeID: &size.Id,
+	Price: 100,
+	Quantity: 10,
+	}
+	err = suite.CreateProduct_Detail(&product_detail)
+	suite.NoError(err) 
+
+		product_detail1 := domain.Product_Detail{
+	 ProductID: &product.Id,
+	ColorID: &color.Id,
+	SizeeID: &size.Id,
+	Price: 100,
+	Quantity: 10,
+	}
+	err = suite.CreateProduct_Detail(&product_detail1)
+	suite.Error(err) 
+
+	var products_details []domain.Product_Detail
+	err =suite.GetProductDetails(&products_details)
+
+	suite.NoError(err)
+	suite.NotEmpty(products_details)  
+
+
+
+	var user  = &domain.User{
+	Email: "fdfdfd", 
+	Fullname: "ds",
+	Avatar: "dsewe",
+	Username: "_deehw",
+ }
+	err= suite.CreateUser(user) 
+
+	suite.NoError(err)
+ suite.NotNil(user)
+  
+  var wishlist = []domain.Wishlist{
+	{
+		UserID: &user.ID, 
+		Products: domain.Product{
+			Id: product.Id,
+		},
+	 },
+  }
+     err=  suite.CreateWishlist(wishlist)
+	 suite.NoError(err) 
+	  
+	 userWishlist , err := suite.GetWishlistByUserID(wishlist)
+  suite.NoError(err) 
+ 
+  suite.T().Log(userWishlist)
+    suite.NotEmpty(userWishlist[0].Products.Name)
 
 }
 func(suite *dbsuite)TestGetUserByEmail(){

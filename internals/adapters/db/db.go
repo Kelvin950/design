@@ -24,7 +24,7 @@ func NewDb(dsn string) (*DB ,error) {
 		return nil , err
 	}
 
-	err =  db.AutoMigrate(&Userr{}  ,&Audience{} , &Category{} ,&Typpe{}  , &Brand{} , &Sizee{} , &Color{} , &Product{} , &Product_Detail{} , &Order{} , &OrderDetail{}) 
+	err =  db.AutoMigrate(&Userr{}  ,&Audience{} , &Category{} ,&Typpe{}  , &Brand{} , &Sizee{} , &Color{} , &Product{} , &Product_Detail{} , &Order{} , &OrderDetail{} , &Wishlist{}) 
    db = db.Debug()
 	if err !=nil{
 		return nil , err

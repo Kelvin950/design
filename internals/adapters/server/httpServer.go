@@ -40,9 +40,10 @@ func (s *Server)Routes(){
 	router.Handle("/products_detail" , s.CreateProduct_Detail()).Methods("POST")
 	router.Handle("/products_detail", s.GetProductDetails()).Methods("GET")
 	router.Handle("/order" , s.CreateOrders()).Methods("POST")
-	router.Handle("/order" , s.GetOrders()).Methods("GET")
-	router.Handle("/order/{userId}" , s.GetUserOrder()).Methods("GET")
+	// router.Handle("/order" , s.GetOrders()).Methods("GET")
+	router.Handle("/order" , s.GetUserOrder()).Methods("GET")
 	router.Handle("/wishlist" , s.GetUserWishlist()).Methods("GET")
+	router.Handle("/wishlist"  , s.CreateWishlist()).Methods("POST")
   s.Router =  router
 }
 
@@ -343,7 +344,7 @@ func(s Server)CreateOrders()http.HandlerFunc{
 			 w.Header().Add("Content-Type" ,"application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			res := domain.H{
-			 "message": err,
+			 "message": "user id incorrect",
 			}
 			res.WriteTo(w)
 			return
@@ -406,8 +407,8 @@ func(s Server)GetOrders()http.HandlerFunc{
 func(s Server)GetUserOrder()http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request) {
 		
-		params := mux.Vars(r) 
-		userId := params["userId"] 
+		
+		userId := r.URL.Query().Get("userId")
 		 
 		i , err:=strconv.Atoi(userId)
 
@@ -464,11 +465,57 @@ w.Header().Add("Content-Type" ,"application/json")
 	
 }
 
+func(s Server)CreateWishlist()http.HandlerFunc{
+	return   func(w http.ResponseWriter, r *http.Request) {
+		
+		var req domain.Wishlist ; 
+
+		if err := json.NewDecoder(r.Body).Decode(&req); err !=nil{
+
+			 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			res := domain.H{
+			 "message": err,
+			}
+			
+			res.WriteTo(w)
+			return
+		} 
+  
+	 
+		dd:=&[]domain.Wishlist{req}
+
+		err:= s.Api.CreateWishlist(dd ) 
+		
+		if err!=nil{
+
+
+			 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			res := domain.H{
+			 "message": err,
+			}
+			
+			res.WriteTo(w)
+			return
+		}
+
+	 w.Header().Add("Content-Type" ,"application/json")
+			w.WriteHeader(http.StatusOK)		 
+		res:= domain.H{
+			"success":true ,
+			"wishlist":dd ,
+		}
+		res.WriteTo(w)
+
+	}
+}
+
 func(s Server)GetUserWishlist()http.HandlerFunc{
 
      return func(w http.ResponseWriter, r *http.Request) {
 
-		userId :=  mux.Vars(r)["userId"] 
+		userId := r.URL.Query().Get("userId")
 	  
 		i , err:=strconv.Atoi(userId)
 

@@ -6,6 +6,7 @@ import "time"
 type OrderDetail struct{
  Id        uint      `json:"id"`
 ProductID *uint `json:"product_id"`
+Product Product `json:"product"`
 	Quantity int  `json:"quantity"`
 	Price float64 	`json:"price"`
 	OrderID *uint `json:"order_id"`

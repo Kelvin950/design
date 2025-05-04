@@ -21,7 +21,7 @@ type DB interface{
 	GetOrders(orders  *[]domain.Orders)error
 	GetUserOrders(order  *domain.Orders)error
 	GetUserByFirebaseUID(user *domain.User)error
-	 CreateWishlist(wishlist []domain.Wishlist)error 
+	 CreateWishlist(wishlist *[]domain.Wishlist)error 
 	GetWishlistByUserID(wishlist []domain.Wishlist)([]domain.Wishlist , error)
 }
 

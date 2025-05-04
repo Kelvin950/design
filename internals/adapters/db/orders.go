@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
+
 
 	"github.com/kelvin950/desing/internals/application/domain"
 	"gorm.io/gorm"
@@ -79,7 +79,7 @@ func (d DB)GetOrders(orders  *[]domain.Orders)error{
 
 	var  ods []Order 
 
-	result := d.db.Preload("OrderDetails").Find(&ods) 
+	result := d.db.Preload("OrderDetails.Product").Find(&ods) 
 
 	if result.Error!=nil{
 		return result.Error
@@ -103,6 +103,18 @@ func (d DB)GetOrders(orders  *[]domain.Orders)error{
 			ProductID: v.ProductID,
 			Id: v.ID,
 			Price: v.Price,
+		 Product: domain.Product{
+			Id: v.Product.ID, 
+			Name: v.Product.Name,
+			Color: v.Product.Color,
+			Sizes: v.Product.Sizes, 
+			Quantity: v.Product.Quantity,
+			MinPrice: v.Product.MinPrice,
+			MaxPrice: v.Product.MaxPrice,
+			BrandID: v.Product.BrandID, 
+			Createdat: v.Product.CreatedAt,
+			Updatedat: v.Product.UpdatedAt,
+		 },
 			Quantity: v.Quantity,
 			Createdat: v.CreatedAt,
 			Updatedat: v.UpdatedAt,
@@ -120,12 +132,12 @@ func(d DB)GetUserOrders(order  *domain.Orders)error{
 	 
    var ord Order 
 
-  result :=  d.db.Preload("OrderDetails").First(&ord , &Order{UserrID: order.UserrID})  
+  result :=  d.db.Preload("OrderDetails.Product").First(&ord , &Order{UserrID: order.UserrID})  
 
   if result.Error !=nil{
 	if result.Error !=nil{
 		 if errors.Is(result.Error , gorm.ErrRecordNotFound){
-			return domain.ApiError{Code: http.StatusNotFound , Msg: "user not found"}
+			return nil
 		 }
 
 		 return result.Error
@@ -139,6 +151,18 @@ var order_details []domain.OrderDetail
 	order_details =  append(order_details, domain.OrderDetail{
 		ProductID: orderDet.ProductID,
 		OrderID: orderDet.OrderID,
+		 Product: domain.Product{
+			Id: orderDet.Product.ID, 
+			Name: orderDet.Product.Name,
+			Color: orderDet.Product.Color,
+			Sizes: orderDet.Product.Sizes, 
+			Quantity: orderDet.Product.Quantity,
+			MinPrice: orderDet.Product.MinPrice,
+			MaxPrice: orderDet.Product.MaxPrice,
+			BrandID: orderDet.Product.BrandID, 
+			Createdat: orderDet.Product.CreatedAt,
+			Updatedat: orderDet.Product.UpdatedAt,
+		 },
 		Id: orderDet.ID,
 		Price: orderDet.Price,
 		Quantity: orderDet.Quantity,

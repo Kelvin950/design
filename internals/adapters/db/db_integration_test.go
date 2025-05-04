@@ -648,7 +648,7 @@ var m  ="xs|s|M|L"
 		},
 	 },
   }
-     err=  suite.CreateWishlist(wishlist)
+     err=  suite.CreateWishlist(&wishlist)
 	 suite.NoError(err) 
 	  
 	 userWishlist , err := suite.GetWishlistByUserID(wishlist)

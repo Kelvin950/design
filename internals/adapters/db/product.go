@@ -21,7 +21,7 @@ type Product struct {
 	TyppeID  *uint  `gorm:"column:type_id"`
 	BrandID *uint  `gorm:"column:brand_id"`
 	ProductDetails []Product_Detail `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	OrderDetails []OrderDetail
+	OrderDetails []OrderDetail `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Wishlist []Wishlist `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 

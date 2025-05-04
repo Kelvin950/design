@@ -25,6 +25,18 @@ func(a Api)GetUserWishlist(userid uint)([]domain.Wishlist  , error){
 }
 
 
+func(a  Api)CreateWishlist(whistlist  *[]domain.Wishlist)(error){
+
+	 
+	err:= a.DB.CreateWishlist(whistlist)
+	if err!=nil{
+		return err
+	}
+
+
+	return  nil
+}
+
 
 
 // func(a Api)CreateUser(user *domain.User)error{

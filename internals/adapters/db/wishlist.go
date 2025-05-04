@@ -1,7 +1,8 @@
 package db
 
 import (
-	
+	"errors"
+
 	"github.com/kelvin950/desing/internals/application/domain"
 	"gorm.io/gorm"
 )
@@ -10,19 +11,19 @@ type Wishlist struct {
 	gorm.Model
    UserrID *uint `gorm:"column:user_id;uniqueIndex:idx_user_product"`
    User Userr  `gorm:"foreignKey:UserrID;constraint:OnUpdate:CasCADE,OnDelete:SET NULL;"`
-   ProductID *uint `gorm:"column:product_id;uniqueIndez:idx_user_product"`
+   ProductID *uint `gorm:"column:product_id;uniqueIndex:idx_user_product"`
    Product  Product `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-func (d DB) CreateWishlist(wishlist []domain.Wishlist)error { 
+func (d DB) CreateWishlist(wishlist *[]domain.Wishlist)error { 
 var newWishlists  []Wishlist 
 
 
-  for _ ,r:= range wishlist{
+  for _ ,r:= range *wishlist{
 
 	newWishlists = append(newWishlists, Wishlist{
 		UserrID: r.UserID , 
-		ProductID:  &r.Products.Id,
+		ProductID:  &r.ProductId,
 	})
 
   }
@@ -33,9 +34,9 @@ var newWishlists  []Wishlist
 	return result.Error 
  }
  
- wishlist = []domain.Wishlist{}
+ wishlist = &[]domain.Wishlist{}
 for  _ , r:= range newWishlists{
-wishlist = append(wishlist, domain.Wishlist{
+*wishlist = append(*wishlist, domain.Wishlist{
 	UserID: r.UserrID, 
 	ID: r.ID,
 	Createdat: r.CreatedAt,
@@ -57,6 +58,10 @@ func (d DB) GetWishlistByUserID(wishlist []domain.Wishlist)([]domain.Wishlist , 
 		UserrID:(wishlist)[0].UserID	})
 
     if result.Error!=nil{
+
+		  if errors.Is(gorm.ErrRecordNotFound ,result.Error){
+				return []domain.Wishlist{} , nil
+		  }
 		return nil ,  result.Error
 	}
 
